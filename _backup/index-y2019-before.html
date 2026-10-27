@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+==================================== 编辑指南 ====================================
+这是一个可直接编辑的单文件网页：用记事本 / VS Code / Sublime 等任意文本编辑器
+打开本文件即可修改，改完保存后刷新浏览器就能看到效果。
+
+各区块内容在文件中的位置（用编辑器搜索以下关键词即可定位）：
+  1. 名字、标语、按钮文字   → 搜索 "hero"（首屏区域）
+  2. 个人介绍、资料表       → 搜索 "about"（关于区）
+  3. 生涯里程碑             → 搜索 "career"（生涯时间轴）
+  4. 数据数字               → 搜索 "stats"（数据区）
+  5. 图片                   → 把照片放进 assets 文件夹，再替换 src="assets/xxx.jpg"
+  6. 联系方式、社交账号     → 搜索 "contact"（联系区）
+  7. 配色、字体等样式       → 搜索 ":root"（CSS 变量区）
+  ★ 照片集 / 相册          → 搜索 "album-group"（相册 HTML 分组）：幼年在 data-group="child"
+                              分组里、青少年 / 成年在对应年份分组里加一行：
+                              <figure class="album-photo"><img src="assets/照片名.jpg" alt="说明"
+                              loading="lazy"><figcaption>说明</figcaption></figure>
+                              照片文件先放进 assets 文件夹；文件里的 ALBUM_DATA 只控制年代标签。
+
+标注「待补充 / 占位」的文字就是预留给你填写的内容位置。
+==================================== 编辑指南 ====================================
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>莱巴金娜 · Elena Rybakina 个人网站</title>
+<meta name="description" content="Elena Rybakina 莱巴金娜个人网站 —— 黑白简约风格，职业网球选手。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23000'/%3E%3Cpath d='M16 1v30M3.5 10c4.5 3.5 20.5 3.5 25 0M3.5 22c4.5-3.5 20.5-3.5 25 0' stroke='%23fff' stroke-width='1.4' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap">
+<style>
+/* ===== 基础 ===== */
+:root{
+  --ink:#000000;
+  --paper:#ffffff;
+  --gray:#6b6b6b;
+  --line:#e5e5e5;
+  --soft:#f7f7f7;
+  --serif:"Bodoni MT","Didot","Playfair Display","Noto Serif SC","Songti SC","SimSun",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);line-height:1.75;font-weight:300;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+section{scroll-margin-top:60px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+::selection{background:var(--ink);color:var(--paper)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ===== 顶部导航 ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;color:#fff;border-bottom:1px solid transparent;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.nav.scrolled{background:var(--paper);color:var(--ink);border-bottom-color:var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:.14em;display:flex;align-items:baseline;gap:10px}
+.logo .logo-en{font-size:19px}
+.logo .logo-cn{font-size:13px;letter-spacing:.3em;opacity:.85}
+.nav-links{display:none;gap:30px;font-size:14px;letter-spacing:.08em}
+.nav-links a{position:relative;padding:4px 0}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:currentColor;transition:width .25s ease}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-burger{display:flex;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:10px 6px}
+.nav-burger span{width:22px;height:1.5px;background:currentColor;transition:transform .25s ease,opacity .25s ease}
+.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;z-index:90;background:var(--paper);color:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:40px 32px;transform:translateY(-100%);transition:transform .35s ease;visibility:hidden}
+.mobile-menu.open{transform:none;visibility:visible}
+.mobile-menu a{font-family:var(--serif);font-size:30px;font-weight:600;padding:16px 0;border-bottom:1px solid var(--line);letter-spacing:.1em}
+
+@media (min-width:768px){
+  .nav-links{display:flex}
+  .nav-burger{display:none}
+}
+
+/* ===== Hero ===== */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden}
+.hero-bg{position:absolute;inset:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.06)}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.58) 55%,rgba(0,0,0,.78) 100%)}
+.hero-content{position:relative;z-index:1;text-align:center;padding:110px 24px 96px;max-width:1000px}
+.hero-kicker{font-size:13px;letter-spacing:.36em;text-transform:uppercase;opacity:.85;margin-bottom:20px}
+.hero h1{font-family:var(--serif);font-weight:600;line-height:.94;font-size:clamp(54px,12.5vw,146px);letter-spacing:.02em}
+.hero h1 span{display:block}
+.hero-cn{margin-top:16px;font-size:20px;letter-spacing:.62em;text-indent:.62em;font-weight:400}
+.hero-tag{margin-top:26px;font-size:15px;letter-spacing:.1em;opacity:.88}
+.hero-cta{margin-top:42px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 30px;border:1px solid #fff;background:transparent;color:#fff;font-size:14px;letter-spacing:.2em;cursor:pointer;transition:background .25s ease,color .25s ease}
+.btn-solid{background:#fff;color:#000}
+.btn-solid:hover{background:transparent;color:#fff}
+.btn-ghost:hover{background:#fff;color:#000}
+.hero-scroll{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:12px;letter-spacing:.32em;opacity:.7;text-align:center;white-space:nowrap}
+.hero-scroll::before{content:"";display:block;width:1px;height:44px;background:#fff;margin:0 auto 8px}
+.hero-kicker,.hero h1,.hero-cn,.hero-tag,.hero-cta{animation:heroIn .95s cubic-bezier(0.22,1,0.36,1) both}
+.hero h1{animation-delay:.08s}
+.hero-cn{animation-delay:.18s}
+.hero-tag{animation-delay:.28s}
+.hero-cta{animation-delay:.38s}
+@keyframes heroIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-kicker,.hero h1,.hero-cn,.hero-tag,.hero-cta{animation:none}
+}
+
+/* ===== 章节 ===== */
+.section{padding:92px 0;border-top:1px solid var(--line)}
+.section-head{margin-bottom:56px}
+.sec-num{font-family:var(--serif);font-size:15px;color:var(--gray);letter-spacing:.22em;text-transform:uppercase}
+.sec-title{font-family:var(--serif);font-size:clamp(30px,5vw,46px);font-weight:600;margin-top:12px;line-height:1.2}
+.sec-sub{margin-top:14px;color:var(--gray);font-size:15px;max-width:600px}
+
+/* 占位框 */
+.placeholder{border:1px dashed var(--ink);background:var(--soft);color:var(--gray);font-size:14px;padding:22px 24px;line-height:1.9}
+.placeholder strong{color:var(--ink);font-weight:500}
+
+/* ===== 关于 ===== */
+.about-grid{display:grid;gap:44px}
+.about-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.04);border:1px solid var(--line)}
+.about-note{display:block;margin-top:12px;font-size:12px;color:var(--gray);letter-spacing:.12em}
+.about-body{display:flex;flex-direction:column}
+.about-body h3{font-family:var(--serif);font-size:22px;font-weight:600;margin-bottom:20px;line-height:1.4}
+.about-body p{font-size:15px;color:#333;margin-bottom:18px;max-width:60ch}
+.fact-list{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:24px}
+.fact-list div{background:var(--paper);padding:14px 16px}
+.fact-list dt{font-size:12px;color:var(--gray);letter-spacing:.12em}
+.fact-list dd{font-family:var(--serif);font-size:15px;font-weight:600;margin-top:4px}
+.about-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:28px}
+.meta-tag{font-size:12px;letter-spacing:.12em;border:1px solid var(--ink);padding:6px 14px}
+
+@media (min-width:900px){
+  .about-grid{grid-template-columns:4fr 8fr;gap:64px}
+}
+
+/* ===== 生涯时间轴 ===== */
+.tl-item{display:grid;grid-template-columns:92px 36px 1fr;position:relative;padding-bottom:54px}
+.tl-item:last-child{padding-bottom:0}
+.tl-year{text-align:right;padding-top:4px;font-family:var(--serif);font-size:15px;color:var(--gray);font-variant-numeric:tabular-nums}
+.tl-axis{position:relative}
+.tl-axis::before{content:"";position:absolute;left:50%;top:0;bottom:-54px;width:1px;background:var(--ink);transform:translateX(-50%)}
+.tl-item:last-child .tl-axis::before{bottom:auto;height:24px}
+.tl-dot{position:absolute;left:50%;top:5px;width:9px;height:9px;background:var(--ink);border-radius:50%;transform:translateX(-50%)}
+.tl-body{padding-left:28px;min-width:0}
+.tl-body h4{font-family:var(--serif);font-size:18px;font-weight:600;line-height:1.4}
+.tl-body p{margin-top:6px;font-size:14px;color:var(--gray)}
+.tl-body .placeholder{margin-top:12px}
+
+@media (max-width:640px){
+  .tl-item{grid-template-columns:70px 28px 1fr}
+  .tl-body{padding-left:20px}
+}
+
+/* ===== 数据 ===== */
+.stats-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--paper);padding:44px 24px;text-align:center}
+.stat-value{font-family:var(--serif);font-size:48px;font-weight:600;line-height:1.05;font-variant-numeric:tabular-nums}
+.stat-label{margin-top:16px;font-size:14px;letter-spacing:.14em}
+.stat-hint{margin-top:8px;font-size:12px;color:var(--gray)}
+@media (min-width:640px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+
+/* ===== 影像 ===== */
+.gallery-grid{display:grid;grid-template-columns:1fr;gap:22px}
+.g-item figure{margin:0}
+.g-item img{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .5s ease;border:1px solid var(--line)}
+.g-item:hover img{transform:scale(1.025)}
+.g-item figcaption{margin-top:10px;font-size:13px;color:var(--gray);letter-spacing:.06em}
+@media (min-width:640px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.gallery-grid{grid-template-columns:repeat(3,1fr)}}
+
+/* ===== 联系 ===== */
+.contact{background:var(--ink);color:var(--paper)}
+.contact .sec-num{color:#999}
+.contact .sec-title{color:#fff}
+.contact .sec-sub{color:#aaa}
+.contact .placeholder{background:#111;border-color:#555;color:#aaa}
+.contact-links{display:flex;gap:12px;margin-top:40px;flex-wrap:wrap}
+.social-btn{width:52px;height:52px;border:1px solid #fff;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s ease,color .25s ease}
+.social-btn:hover{background:#fff;color:#000}
+.social-btn svg{width:20px;height:20px}
+
+/* ===== 页脚 ===== */
+.footer{background:var(--ink);color:#8a8a8a;border-top:1px solid #262626;padding:26px 0;font-size:12px;letter-spacing:.06em}
+.footer .wrap{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* ===== 照片集入口 ===== */
+.g-item{display:block}
+.gallery-enter{display:flex;align-items:center;gap:18px;margin-top:30px;flex-wrap:wrap}
+.gallery-enter-note{font-size:13px;color:var(--gray);letter-spacing:.08em}
+.btn-dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn-dark:hover{background:transparent;color:var(--ink)}
+
+/* ===== 照片集 / 相册视图 ===== */
+.album{display:none;position:fixed;inset:0;z-index:150;background:var(--paper);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.album.open{display:block}
+body.album-open{overflow:hidden}
+.album-head{position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--line);z-index:10}
+.album-head-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:18px 24px 14px}
+.album-back{justify-self:start;background:none;border:0;border-bottom:1px solid var(--ink);padding:4px 0;font-size:14px;letter-spacing:.08em;cursor:pointer;color:var(--ink)}
+.album-title{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:.14em;text-align:center}
+.album-spacer{justify-self:end}
+.era-tabs{display:flex;border-bottom:1px solid var(--line)}
+.era-tab{flex:1;background:none;border:0;border-bottom:2px solid transparent;padding:14px 0 12px;font-size:15px;letter-spacing:.2em;cursor:pointer;color:var(--gray);transition:color .2s ease,border-color .2s ease}
+.era-tab.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:500}
+.album-body{padding-top:36px;padding-bottom:96px}
+.year-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:34px}
+.chip{border:1px solid var(--ink);background:none;padding:8px 16px;font-size:14px;letter-spacing:.1em;cursor:pointer;color:var(--ink);transition:background .2s ease,color .2s ease}
+.chip:hover{background:var(--soft)}
+.chip.active{background:var(--ink);color:#fff}
+.album-grid{display:grid;grid-template-columns:1fr;gap:22px}
+.album-group{display:contents}
+.album-group[hidden]{display:none}
+.album-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid var(--line)}
+.album-photo figcaption{margin-top:10px;font-size:13px;color:var(--gray);letter-spacing:.06em}
+.album-empty{display:flex;align-items:center;justify-content:center;min-height:180px;border:1px dashed var(--gray);background:var(--soft);color:var(--gray);font-size:13px;letter-spacing:.12em;text-align:center;padding:24px}
+.album-add{min-height:180px;border:1px dashed var(--ink);background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:var(--ink);font-size:13px;letter-spacing:.14em;transition:background .2s ease;grid-column:1 / -1}
+.album-add:hover{background:var(--soft)}
+.album-add .plus{font-size:26px;line-height:1;font-family:var(--serif)}
+.album-tip{margin-top:40px;font-size:12px;color:var(--gray);letter-spacing:.08em}
+@media (min-width:640px){.album-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1100px){.album-grid{grid-template-columns:repeat(4,1fr)}}
+
+/* ===== Toast 提示 ===== */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:#fff;padding:11px 20px;font-size:14px;letter-spacing:.05em;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:300;max-width:86vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== 滚动揭示 ===== */
+.reveal{opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部导航 ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#home" aria-label="回到首页">
+      <span class="logo-en">E.R.</span>
+      <span class="logo-cn">莱巴金娜</span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#home">首页</a>
+      <a href="#about">关于</a>
+      <a href="#career">生涯</a>
+      <a href="#stats">数据</a>
+      <a href="#gallery">影像</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <button class="nav-burger" id="burger" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- 移动端菜单 -->
+<nav class="mobile-menu" id="mobileMenu" aria-label="移动端导航">
+  <a href="#home">首页</a>
+  <a href="#about">关于</a>
+  <a href="#career">生涯</a>
+  <a href="#stats">数据</a>
+  <a href="#gallery">影像</a>
+  <a href="#contact">联系</a>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="home">
+  <div class="hero-bg" aria-hidden="true">
+    <img src="assets/hero-wimbledon-final.jpg" alt="">
+  </div>
+  <div class="hero-content">
+    <p class="hero-kicker">WTA · 职业网球选手</p>
+    <h1><span>ELENA</span><span>RYBAKINA</span></h1>
+    <p class="hero-cn">莱 巴 金 娜</p>
+    <p class="hero-tag">2022 温布尔登女单冠军 · 2026年澳网冠军/美网冠军</p>
+    <div class="hero-cta">
+      <a class="btn btn-solid" href="#about">了解更多</a>
+      <a class="btn btn-ghost" href="#gallery">影像集</a>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">向下滚动</div>
+</section>
+
+<!-- ===== 关于 ===== -->
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">01 · 关于</p>
+      <h2 class="sec-title">ABOUT</h2>
+      <p class="sec-sub"></p>
+    </div>
+    <div class="about-grid">
+      <div class="about-photo reveal">
+        <img src="assets/portrait-bw.jpg" alt="莱巴金娜肖像">
+        <span class="about-note"></span>
+      </div>
+      <div class="about-body reveal">
+        <h3>个人介绍</h3>
+        <p class="placeholder"><strong></strong>莱巴金娜1999年6月17日出生于俄罗斯莫斯科，身高1.84米，现代表哈萨克斯坦出战，是首位夺得大满贯单打冠军并登顶WTA世界第一的哈萨克斯坦球员，以凌厉发球和冷静的“冰美人”气质著称。她家里养了三只狗：父母养的是穆利亚（Mulia）和贝基（Becky），她自己养了一只叫托比（Toby）的小狗；她有一个姐姐叫安娜（Anna），父母分别是安德烈（Andrey）和叶卡捷琳娜（Ekaterina）</p>
+        <dl class="fact-list">
+          <div><dt>出生日期</dt><dd>1999年6月17日</dd></div>
+          <div><dt>出生地</dt><dd>莫斯科/俄罗斯</dd></div>
+          <div><dt>身高</dt><dd>184厘米</dd></div>
+          <div><dt>持拍手</dt><dd>右手</dd></div>
+        </dl>
+        <div class="about-meta">
+          <span class="meta-tag">赛场关键词 · 面如平湖而胸有惊雷</span>
+          <span class="meta-tag">教练团队 · Stefano Vukov（CRO/ITA） Stanislav Khamarsky(UKR)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 生涯 ===== -->
+<section class="section" id="career">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">02 · 生涯</p>
+      <h2 class="sec-title">CAREER</h2>
+      <p class="sec-sub">职业生涯里程碑时间线。</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-year">2026</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>登顶世界第一</h4>
+          <p>2026年夺得澳网/美网两项大满贯冠军并在美网后登顶世界第一</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2022</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>初夺大满贯冠军</h4>
+          <p>2022年于温布尔登网球公开赛获得第一个大满贯冠军。</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2019</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>WTA生涯首冠</h4>
+          <p>2019年于布加勒斯特获得WTA首冠。</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2017</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>青少年终章</h4>
+          <p>2017年获得第一个青少年Grade A冠军，并在当年创造青少年生涯最高排名世界第三位。</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2014</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>生涯起点</h4>
+          <p>2014年正式开始征战ITF赛事。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 数据 ===== -->
+<section class="section" id="stats">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">03 · 数据</p>
+      <h2 class="sec-title">STATS</h2>
+      <p class="sec-sub">关键数据一览。</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat reveal"><div class="stat-value">No.1</div><div class="stat-label">最高单打排名</div><div class="stat-hint">世界第一</div></div>
+      <div class="stat reveal"><div class="stat-value">3</div><div class="stat-label">大满贯单打冠军</div><div class="stat-hint">温网 · 澳网 · 美网</div></div>
+      <div class="stat reveal"><div class="stat-value">15</div><div class="stat-label">WTA 单打冠军</div><div class="stat-hint">职业生涯累计</div></div>
+      <div class="stat reveal"><div class="stat-value">210+</div><div class="stat-label">最快发球时速</div><div class="stat-hint">km/h</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 影像（照片集入口） ===== -->
+<section class="section" id="gallery">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">04 · 影像</p>
+      <h2 class="sec-title">GALLERY</h2>
+      <p class="sec-sub">点击任意照片，或「进入照片集」，打开按年代整理的相册：幼年 · 青少年（2013–2017）· 成年（2018–2026）。</p>
+      <div class="gallery-enter reveal">
+        <a class="btn btn-dark" href="#album/child">进入照片集</a>
+        <span class="gallery-enter-note"></span>
+      </div>
+    </div>
+    <div class="gallery-grid">
+      <a class="g-item reveal" href="#album/adult/2024"><figure><img src="assets/gallery-wimbledon-action.jpg" alt="温布尔登赛场击球瞬间"><figcaption>温布尔登 · 击球瞬间</figcaption></figure></a>
+      <a class="g-item reveal" href="#album/adult/2022"><figure><img src="assets/gallery-black-outfit.jpg" alt="黑色运动装赛场照"><figcaption>赛场 · 专注时刻</figcaption></figure></a>
+      <a class="g-item reveal" href="#album/adult/2023"><figure><img src="assets/gallery-title-defense.jpg" alt="温布尔登卫冕之路"><figcaption>温布尔登 · 卫冕之路</figcaption></figure></a>
+      <a class="g-item reveal" href="#album/adult/2022"><figure><img src="assets/gallery-wimbledon-scene.jpg" alt="温布尔登赛场准备"><figcaption>温布尔登 · 赛前准备</figcaption></figure></a>
+      <a class="g-item reveal" href="#album/adult/2022"><figure><img src="assets/gallery-trophy.jpg" alt="2022 温布尔登捧杯时刻"><figcaption>2022 温布尔登 · 捧杯时刻</figcaption></figure></a>
+      <a class="g-item reveal" href="#album/adult/2025"><figure><img src="assets/gallery-practice.jpg" alt="训练备战"><figcaption>训练 · 备战赛场</figcaption></figure></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 联系 ===== -->
+<section class="section contact" id="contact">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">05 · 联系</p>
+      <h2 class="sec-title">CONTACT</h2>
+      <p class="sec-sub">商务合作、媒体采访与球迷交流。联系方式待本人提供，社交账号暂为占位。</p>
+    </div>
+    <div class="reveal">
+      <p class="placeholder"><strong>【联系方式占位】</strong>在这里填写电子邮箱、经纪团队或媒体联络信息。</p>
+      <div class="contact-links">
+        <button class="social-btn" data-toast="Instagram 账号待配置" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button class="social-btn" data-toast="X 账号待配置" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h3.6l4.3 6.1L16.9 3H21l-6.7 8.2L21.6 21H18l-4.8-6.8L7.3 21H3l7.3-8.9L4 3z"/></svg>
+        </button>
+        <button class="social-btn" data-toast="YouTube 账号待配置" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10 9.5l5 2.5-5 2.5v-5z" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 照片集（相册视图） ===== -->
+<div class="album" id="album" role="dialog" aria-modal="true" aria-label="照片集">
+  <div class="album-head">
+    <div class="wrap album-head-inner">
+      <button class="album-back" id="albumBack" type="button">← 返回影像</button>
+      <p class="album-title">照片集 · PHOTO ALBUM</p>
+      <span class="album-spacer" aria-hidden="true"></span>
+    </div>
+    <div class="wrap">
+      <nav class="era-tabs" id="eraTabs" aria-label="年代切换">
+        <button class="era-tab" type="button" data-era="child">幼年</button>
+        <button class="era-tab" type="button" data-era="youth">青少年</button>
+        <button class="era-tab" type="button" data-era="adult">成年</button>
+      </nav>
+    </div>
+  </div>
+  <div class="album-body wrap">
+    <div class="year-chips" id="yearChips"></div>
+    <div class="album-grid" id="albumGrid">
+      <!-- 幼年 -->
+      <div class="album-group" data-group="child">
+        <figure class="album-photo"><img src="assets/child-1.jpg" alt="草地 · 童年留影" loading="lazy"><figcaption>草地 · 童年留影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-2.jpg" alt="户外用餐 · 童趣日常" loading="lazy"><figcaption>户外用餐 · 童趣日常</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-3.jpg" alt="车内 · 少女自拍" loading="lazy"><figcaption>车内 · 少女自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-4.jpg" alt="生日 · Happy Birthday Lena" loading="lazy"><figcaption>生日 · Happy Birthday Lena</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-5.jpg" alt="少年网球赛 · 获奖留念" loading="lazy"><figcaption>少年网球赛 · 获奖留念</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-6.jpg" alt="网球馆 · 与小伙伴和小狗" loading="lazy"><figcaption>网球馆 · 与小伙伴和小狗</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-7.jpg" alt="快餐店 · 休闲瞬间" loading="lazy"><figcaption>快餐店 · 休闲瞬间</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-8.jpg" alt="机舱 · 搞怪瞬间" loading="lazy"><figcaption>机舱 · 搞怪瞬间</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-9.jpg" alt="机舱 · 辫子胡须玩笑" loading="lazy"><figcaption>机舱 · 辫子胡须玩笑</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-10.jpg" alt="机舱 · 旅途时光" loading="lazy"><figcaption>机舱 · 旅途时光</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-11.jpg" alt="机舱 · 亲密自拍" loading="lazy"><figcaption>机舱 · 亲密自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-12.jpg" alt="车内 · 自拍拼图" loading="lazy"><figcaption>车内 · 自拍拼图</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-13.jpg" alt="复古红装 · 舞台留影" loading="lazy"><figcaption>复古红装 · 舞台留影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-14.jpg" alt="生日祝福 · 好友合影" loading="lazy"><figcaption>生日祝福 · 好友合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-15.jpg" alt="户外栏杆 · 休闲时光" loading="lazy"><figcaption>户外栏杆 · 休闲时光</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-16.jpg" alt="林间草地 · 阳光笑容" loading="lazy"><figcaption>林间草地 · 阳光笑容</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-17.jpg" alt="侧脸特写 · 珍珠耳坠" loading="lazy"><figcaption>侧脸特写 · 珍珠耳坠</figcaption></figure>
+        <figure class="album-photo"><img src="assets/child-18.jpg" alt="户外用餐 · 童趣时刻" loading="lazy"><figcaption>户外用餐 · 童趣时刻</figcaption></figure>
+      </div>
+      <!-- 青少年 -->
+      <div class="album-group" data-group="youth-2013" hidden>
+        <figure class="album-photo"><img src="assets/youth-2013-1.png" alt="2013 · 红土赛场击球" loading="lazy"><figcaption>2013 · 红土赛场击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2013-2.png" alt="2013 · 采访合影" loading="lazy"><figcaption>2013 · 采访合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2013-3.png" alt="2013 · 持拍备战" loading="lazy"><figcaption>2013 · 持拍备战</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="youth-2015" hidden>
+        <figure class="album-photo"><img src="assets/youth-2015-1.png" alt="2015 · 硬地赛场击球" loading="lazy"><figcaption>2015 · 硬地赛场击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2015-2.png" alt="2015 · 挥拍瞬间" loading="lazy"><figcaption>2015 · 挥拍瞬间</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2015-3.png" alt="2015 · 腾空击球" loading="lazy"><figcaption>2015 · 腾空击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2015-4.png" alt="2015 · 美网赛场击球" loading="lazy"><figcaption>2015 · 美网赛场击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2015-5.png" alt="2015 · 挥拍风采" loading="lazy"><figcaption>2015 · 挥拍风采</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2015-6.png" alt="2015 · 扭转挥拍" loading="lazy"><figcaption>2015 · 扭转挥拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2015-7.png" alt="2015 · 跳跃击球" loading="lazy"><figcaption>2015 · 跳跃击球</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="youth-2016" hidden>
+        <figure class="album-photo"><img src="assets/youth-2016-1.png" alt="2016 · 喀山室内赛场" loading="lazy"><figcaption>2016 · 喀山室内赛场</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-2.png" alt="2016 · 室内赛场持拍" loading="lazy"><figcaption>2016 · 室内赛场持拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-3.png" alt="2016 · 发球瞬间" loading="lazy"><figcaption>2016 · 发球瞬间</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-4.png" alt="2016 · 叶利钦杯颁奖" loading="lazy"><figcaption>2016 · 叶利钦杯颁奖</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-5.png" alt="2016 · 颁奖握手" loading="lazy"><figcaption>2016 · 颁奖握手</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-6.png" alt="2016 · 捧杯时刻" loading="lazy"><figcaption>2016 · 捧杯时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-7.png" alt="2016 · 颁奖捧杯" loading="lazy"><figcaption>2016 · 颁奖捧杯</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-8.png" alt="2016 · 叶利钦杯颁奖礼" loading="lazy"><figcaption>2016 · 叶利钦杯颁奖礼</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-9.png" alt="2016 · 授奖时刻" loading="lazy"><figcaption>2016 · 授奖时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-10.png" alt="2016 · 颁奖球员合影" loading="lazy"><figcaption>2016 · 颁奖球员合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-11.png" alt="2016 · 获奖感言" loading="lazy"><figcaption>2016 · 获奖感言</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-12.png" alt="2016 · 领奖台合影" loading="lazy"><figcaption>2016 · 领奖台合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-13.png" alt="2016 · 颁奖大合影" loading="lazy"><figcaption>2016 · 颁奖大合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-14.png" alt="2016 · 颁奖合影" loading="lazy"><figcaption>2016 · 颁奖合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-15.png" alt="2016 · 温网女双首轮" loading="lazy"><figcaption>2016 · 温网女双首轮</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-16.png" alt="2016 · 社交媒体互动" loading="lazy"><figcaption>2016 · 社交媒体互动</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-17.png" alt="2016 · 出游自拍" loading="lazy"><figcaption>2016 · 出游自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-18.png" alt="2016 · 国家队列队" loading="lazy"><figcaption>2016 · 国家队列队</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-19.png" alt="2016 · 仪式列队" loading="lazy"><figcaption>2016 · 仪式列队</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-20.png" alt="2016 · 列队仪式" loading="lazy"><figcaption>2016 · 列队仪式</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-21.png" alt="2016 · 列队发言" loading="lazy"><figcaption>2016 · 列队发言</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-22.png" alt="2016 · 列队合影" loading="lazy"><figcaption>2016 · 列队合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-23.png" alt="2016 · 场边时刻" loading="lazy"><figcaption>2016 · 场边时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-24.png" alt="2016 · 入场列队" loading="lazy"><figcaption>2016 · 入场列队</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-25.png" alt="2016 · 奥林匹克馆列队" loading="lazy"><figcaption>2016 · 奥林匹克馆列队</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-26.png" alt="2016 · 列队鼓掌" loading="lazy"><figcaption>2016 · 列队鼓掌</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-27.png" alt="2016 · 列队风采" loading="lazy"><figcaption>2016 · 列队风采</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-28.png" alt="2016 · 列队时刻" loading="lazy"><figcaption>2016 · 列队时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-29.png" alt="2016 · 接见互动" loading="lazy"><figcaption>2016 · 接见互动</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-30.png" alt="2016 · 仪式致辞" loading="lazy"><figcaption>2016 · 仪式致辞</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-31.png" alt="2016 · 致辞时刻" loading="lazy"><figcaption>2016 · 致辞时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-32.png" alt="2016 · 国家队合影" loading="lazy"><figcaption>2016 · 国家队合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-33.png" alt="2016 · 队友同框" loading="lazy"><figcaption>2016 · 队友同框</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-34.png" alt="2016 · 克里姆林杯现场" loading="lazy"><figcaption>2016 · 克里姆林杯现场</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-35.png" alt="2016 · 克里姆林杯合影" loading="lazy"><figcaption>2016 · 克里姆林杯合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-36.png" alt="2016 · 克里姆林杯纪念" loading="lazy"><figcaption>2016 · 克里姆林杯纪念</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-37.png" alt="2016 · 展台合影" loading="lazy"><figcaption>2016 · 展台合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-38.png" alt="2016 · 展台闲坐" loading="lazy"><figcaption>2016 · 展台闲坐</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-39.png" alt="2016 · 队友合影" loading="lazy"><figcaption>2016 · 队友合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-40.png" alt="2016 · 国旗背景合影" loading="lazy"><figcaption>2016 · 国旗背景合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-41.png" alt="2016 · 站姿合影" loading="lazy"><figcaption>2016 · 站姿合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2016-42.png" alt="2016 · 捷豹展台合影" loading="lazy"><figcaption>2016 · 捷豹展台合影</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="youth-2017" hidden>
+        <figure class="album-photo"><img src="assets/youth-2017-1.png" alt="2017 · 澳网赛场击球" loading="lazy"><figcaption>2017 · 澳网赛场击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-2.png" alt="2017 · 腾空挥拍" loading="lazy"><figcaption>2017 · 腾空挥拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-3.png" alt="2017 · 接发准备" loading="lazy"><figcaption>2017 · 接发准备</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-4.png" alt="2017 · 发球抛球" loading="lazy"><figcaption>2017 · 发球抛球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-5.png" alt="2017 · 挥拍击球" loading="lazy"><figcaption>2017 · 挥拍击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-6.png" alt="2017 · 场边补水" loading="lazy"><figcaption>2017 · 场边补水</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-7.png" alt="2017 · 室内挥拍" loading="lazy"><figcaption>2017 · 室内挥拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-8.png" alt="2017 · 室内双打" loading="lazy"><figcaption>2017 · 室内双打</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-9.png" alt="2017 · 颁奖合影" loading="lazy"><figcaption>2017 · 颁奖合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-10.png" alt="2017 · 颁奖仪式" loading="lazy"><figcaption>2017 · 颁奖仪式</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-11.png" alt="2017 · 好友欢聚" loading="lazy"><figcaption>2017 · 好友欢聚</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-12.png" alt="2017 · 创意合成照" loading="lazy"><figcaption>2017 · 创意合成照</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-13.png" alt="2017 · ITF 颁奖合影" loading="lazy"><figcaption>2017 · ITF 颁奖合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-14.png" alt="2017 · 红土颁奖捧杯" loading="lazy"><figcaption>2017 · 红土颁奖捧杯</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-15.png" alt="2017 · 亲吻奖杯" loading="lazy"><figcaption>2017 · 亲吻奖杯</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-16.png" alt="2017 · 红土入场仪式" loading="lazy"><figcaption>2017 · 红土入场仪式</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-17.png" alt="2017 · 屈膝挥拍" loading="lazy"><figcaption>2017 · 屈膝挥拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-18.png" alt="2017 · 发球跃起" loading="lazy"><figcaption>2017 · 发球跃起</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-19.png" alt="2017 · 击球瞬间" loading="lazy"><figcaption>2017 · 击球瞬间</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-20.png" alt="2017 · 赛后握手" loading="lazy"><figcaption>2017 · 赛后握手</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-21.png" alt="2017 · 赛场特写" loading="lazy"><figcaption>2017 · 赛场特写</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-22.png" alt="2017 · 背影特写" loading="lazy"><figcaption>2017 · 背影特写</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-23.png" alt="2017 · 颁奖时刻" loading="lazy"><figcaption>2017 · 颁奖时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-24.png" alt="2017 · 法网赛场挥拍" loading="lazy"><figcaption>2017 · 法网赛场挥拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-25.png" alt="2017 · 法网红土击球" loading="lazy"><figcaption>2017 · 法网红土击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-26.png" alt="2017 · 法网挥拍" loading="lazy"><figcaption>2017 · 法网挥拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-27.png" alt="2017 · 红土击球" loading="lazy"><figcaption>2017 · 红土击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-28.png" alt="2017 · 红土接球" loading="lazy"><figcaption>2017 · 红土接球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-29.png" alt="2017 · 生日地铁照" loading="lazy"><figcaption>2017 · 生日地铁照</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-30.png" alt="2017 · 场边小憩" loading="lazy"><figcaption>2017 · 场边小憩</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-31.png" alt="2017 · 好友互动" loading="lazy"><figcaption>2017 · 好友互动</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-32.png" alt="2017 · 国家队山景合影" loading="lazy"><figcaption>2017 · 国家队山景合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-33.png" alt="2017 · 举旗列队" loading="lazy"><figcaption>2017 · 举旗列队</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-34.png" alt="2017 · 队友合影" loading="lazy"><figcaption>2017 · 队友合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-35.png" alt="2017 · 绣球花合影" loading="lazy"><figcaption>2017 · 绣球花合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-36.png" alt="2017 · 绣球花肖像" loading="lazy"><figcaption>2017 · 绣球花肖像</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-37.png" alt="2017 · 欧锦赛领奖" loading="lazy"><figcaption>2017 · 欧锦赛领奖</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-38.png" alt="2017 · 欧锦赛合影" loading="lazy"><figcaption>2017 · 欧锦赛合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-39.png" alt="2017 · 发球瞬间" loading="lazy"><figcaption>2017 · 发球瞬间</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-40.png" alt="2017 · 领奖台列队" loading="lazy"><figcaption>2017 · 领奖台列队</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-41.png" alt="2017 · 欧锦赛列队" loading="lazy"><figcaption>2017 · 欧锦赛列队</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-42.png" alt="2017 · 花园人像" loading="lazy"><figcaption>2017 · 花园人像</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-43.png" alt="2017 · 格兰维尔街景" loading="lazy"><figcaption>2017 · 格兰维尔街景</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-44.png" alt="2017 · 搞怪自拍" loading="lazy"><figcaption>2017 · 搞怪自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-45.png" alt="2017 · 专注击球" loading="lazy"><figcaption>2017 · 专注击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-46.png" alt="2017 · 山间跳跃" loading="lazy"><figcaption>2017 · 山间跳跃</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-47.png" alt="2017 · 生日合影" loading="lazy"><figcaption>2017 · 生日合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-48.png" alt="2017 · 挥拍击球" loading="lazy"><figcaption>2017 · 挥拍击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-49.png" alt="2017 · 室内发球" loading="lazy"><figcaption>2017 · 室内发球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-50.png" alt="2017 · 山羊自拍" loading="lazy"><figcaption>2017 · 山羊自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-51.png" alt="2017 · 与小动物互动" loading="lazy"><figcaption>2017 · 与小动物互动</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-52.png" alt="2017 · 喂养小兔" loading="lazy"><figcaption>2017 · 喂养小兔</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-53.png" alt="2017 · 克里姆林杯赛场" loading="lazy"><figcaption>2017 · 克里姆林杯赛场</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-54.png" alt="2017 · 观赛合影" loading="lazy"><figcaption>2017 · 观赛合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-55.png" alt="2017 · 胜利庆祝" loading="lazy"><figcaption>2017 · 胜利庆祝</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-56.png" alt="2017 · 击球瞬间" loading="lazy"><figcaption>2017 · 击球瞬间</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-57.png" alt="2017 · 街景自拍" loading="lazy"><figcaption>2017 · 街景自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-58.png" alt="2017 · 海边背影" loading="lazy"><figcaption>2017 · 海边背影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-59.png" alt="2017 · 游船出游" loading="lazy"><figcaption>2017 · 游船出游</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-60.png" alt="2017 · 好友合影" loading="lazy"><figcaption>2017 · 好友合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-61.png" alt="2017 · 海边合影" loading="lazy"><figcaption>2017 · 海边合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-62.png" alt="2017 · 海边合影" loading="lazy"><figcaption>2017 · 海边合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-63.png" alt="2017 · 海边瑜伽" loading="lazy"><figcaption>2017 · 海边瑜伽</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-64.png" alt="2017 · 团队草坪合影" loading="lazy"><figcaption>2017 · 团队草坪合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-65.png" alt="2017 · 好友自拍" loading="lazy"><figcaption>2017 · 好友自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-66.png" alt="2017 · 生日聚会" loading="lazy"><figcaption>2017 · 生日聚会</figcaption></figure>
+        <figure class="album-photo"><img src="assets/youth-2017-67.png" alt="2017 · 聚会合影" loading="lazy"><figcaption>2017 · 聚会合影</figcaption></figure>
+      </div>
+      <!-- 成年 -->
+      <div class="album-group" data-group="adult-2018" hidden>
+        <figure class="album-photo"><img src="assets/adult-2018-1.png" alt="2018 · 冬日合影" loading="lazy"><figcaption>2018 · 冬日合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-2.png" alt="2018 · 沙发合影" loading="lazy"><figcaption>2018 · 沙发合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-3.png" alt="2018 · 休闲合影" loading="lazy"><figcaption>2018 · 休闲合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-4.png" alt="2018 · 圣彼得堡资格证件" loading="lazy"><figcaption>2018 · 圣彼得堡资格证件</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-5.png" alt="2018 · 赛场击球" loading="lazy"><figcaption>2018 · 赛场击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-6.png" alt="2018 · 圣彼得堡杯合影" loading="lazy"><figcaption>2018 · 圣彼得堡杯合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-7.png" alt="2018 · 场边合影" loading="lazy"><figcaption>2018 · 场边合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-8.png" alt="2018 · 训练时刻" loading="lazy"><figcaption>2018 · 训练时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-9.png" alt="2018 · 水边合影" loading="lazy"><figcaption>2018 · 水边合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-10.png" alt="2018 · 水边自拍" loading="lazy"><figcaption>2018 · 水边自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-11.png" alt="2018 · 户外放松" loading="lazy"><figcaption>2018 · 户外放松</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-12.png" alt="2018 · 山间留影" loading="lazy"><figcaption>2018 · 山间留影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-13.png" alt="2018 · 思念自拍" loading="lazy"><figcaption>2018 · 思念自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-14.png" alt="2018 · 巴黎铁塔留影" loading="lazy"><figcaption>2018 · 巴黎铁塔留影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-15.png" alt="2018 · 山间跳跃" loading="lazy"><figcaption>2018 · 山间跳跃</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-16.png" alt="2018 · 滨海留影" loading="lazy"><figcaption>2018 · 滨海留影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-17.png" alt="2018 · 斯特拉斯堡赛场" loading="lazy"><figcaption>2018 · 斯特拉斯堡赛场</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-18.png" alt="2018 · 赛前备战" loading="lazy"><figcaption>2018 · 赛前备战</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-19.png" alt="2018 · 红土挥拍" loading="lazy"><figcaption>2018 · 红土挥拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-20.png" alt="2018 · 场边片刻" loading="lazy"><figcaption>2018 · 场边片刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-21.png" alt="2018 · 赛事入场" loading="lazy"><figcaption>2018 · 赛事入场</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-22.png" alt="2018 · 红土击球" loading="lazy"><figcaption>2018 · 红土击球</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-23.png" alt="2018 · 街巷漫步" loading="lazy"><figcaption>2018 · 街巷漫步</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-24.png" alt="2018 · 斯特拉斯堡街景" loading="lazy"><figcaption>2018 · 斯特拉斯堡街景</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-25.png" alt="2018 · 搭档合影" loading="lazy"><figcaption>2018 · 搭档合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-26.png" alt="2018 · 山坡自拍" loading="lazy"><figcaption>2018 · 山坡自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-27.png" alt="2018 · 观景台远眺" loading="lazy"><figcaption>2018 · 观景台远眺</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-28.png" alt="2018 · 古迹自拍" loading="lazy"><figcaption>2018 · 古迹自拍</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-29.png" alt="2018 · 城市观景" loading="lazy"><figcaption>2018 · 城市观景</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-30.png" alt="2018 · 场边合影" loading="lazy"><figcaption>2018 · 场边合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-31.png" alt="2018 · 聚餐时光" loading="lazy"><figcaption>2018 · 聚餐时光</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-32.png" alt="2018 · Lale 杯领奖" loading="lazy"><figcaption>2018 · Lale 杯领奖</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-33.png" alt="2018 · 赛场互动" loading="lazy"><figcaption>2018 · 赛场互动</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-34.png" alt="2018 · 赛场片刻" loading="lazy"><figcaption>2018 · 赛场片刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-35.png" alt="2018 · 与小球迷合影" loading="lazy"><figcaption>2018 · 与小球迷合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-36.png" alt="2018 · 球场留影" loading="lazy"><figcaption>2018 · 球场留影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-37.png" alt="2018 · 城市漫步" loading="lazy"><figcaption>2018 · 城市漫步</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-38.png" alt="2018 · 场外小憩" loading="lazy"><figcaption>2018 · 场外小憩</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-39.png" alt="2018 · 场馆外行走" loading="lazy"><figcaption>2018 · 场馆外行走</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-40.png" alt="2018 · 场边补水" loading="lazy"><figcaption>2018 · 场边补水</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-41.png" alt="2018 · 场边休息" loading="lazy"><figcaption>2018 · 场边休息</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-42.png" alt="2018 · 球员通道" loading="lazy"><figcaption>2018 · 球员通道</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-43.png" alt="2018 · 场地漫步" loading="lazy"><figcaption>2018 · 场地漫步</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-44.png" alt="2018 · 场外片刻" loading="lazy"><figcaption>2018 · 场外片刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-45.png" alt="2018 · 室内合影" loading="lazy"><figcaption>2018 · 室内合影</figcaption></figure>
+        <figure class="album-photo"><img src="assets/adult-2018-46.png" alt="2018 · 酒店大堂" loading="lazy"><figcaption>2018 · 酒店大堂</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="adult-2019" hidden></div>
+      <div class="album-group" data-group="adult-2020" hidden></div>
+      <div class="album-group" data-group="adult-2021" hidden></div>
+      <div class="album-group" data-group="adult-2022" hidden>
+        <figure class="album-photo"><img src="assets/hero-wimbledon-final.jpg" alt="2022 温布尔登 · 决赛" loading="lazy"><figcaption>2022 温布尔登 · 决赛</figcaption></figure>
+        <figure class="album-photo"><img src="assets/gallery-trophy.jpg" alt="2022 温布尔登 · 捧杯时刻" loading="lazy"><figcaption>2022 温布尔登 · 捧杯时刻</figcaption></figure>
+        <figure class="album-photo"><img src="assets/portrait-bw.jpg" alt="2022 · 肖像" loading="lazy"><figcaption>2022 · 肖像</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="adult-2023" hidden>
+        <figure class="album-photo"><img src="assets/gallery-title-defense.jpg" alt="温布尔登 · 卫冕之路" loading="lazy"><figcaption>温布尔登 · 卫冕之路</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="adult-2024" hidden>
+        <figure class="album-photo"><img src="assets/gallery-wimbledon-action.jpg" alt="温布尔登 · 击球瞬间" loading="lazy"><figcaption>温布尔登 · 击球瞬间</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="adult-2025" hidden>
+        <figure class="album-photo"><img src="assets/gallery-practice.jpg" alt="训练 · 备战赛场" loading="lazy"><figcaption>训练 · 备战赛场</figcaption></figure>
+      </div>
+      <div class="album-group" data-group="adult-2026" hidden></div>
+    </div>
+    <p class="album-tip" id="albumTip">如何添加照片：把照片放入 assets 文件夹，再在下方相册 HTML 对应年份分组里加一行（格式见文件内注释）；或直接把照片发我，由我帮你添加。</p>
+  </div>
+</div>
+
+<!-- ===== 页脚 ===== -->
+<footer class="footer">
+  <div class="wrap">
+    <span>© 2026 THE ERA OF ER</span>
+    <span>本站为非官方个人网站 · 由球迷hokapilq运营</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   相册结构说明
+   照片直接写在相册 HTML 里（#albumGrid 内的 .album-group 分组）。
+   添加照片：1) 把照片文件放入 assets 文件夹；
+             2) 在对应年份分组内加一行：
+                <figure class="album-photo"><img src="assets/照片名.jpg" alt="说明" loading="lazy"><figcaption>说明</figcaption></figure>
+   也可以直接把照片发给助手代为添加。
+   下方 ALBUM_DATA 只用于控制年代标签与年份切换。
+   ============================================================ */
+var ALBUM_DATA = {
+  child: { label:'幼年', years:null },
+  youth: { label:'青少年', years:['2013','2015','2016','2017'] },
+  adult: { label:'成年', years:['2018','2019','2020','2021','2022','2023','2024','2025','2026'] }
+};
+
+(function(){
+  var nav = document.getElementById('nav');
+  var burger = document.getElementById('burger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  /* 导航滚动样式 */
+  function onScroll(){
+    if(window.scrollY > 24){ nav.classList.add('scrolled'); }else{ nav.classList.remove('scrolled'); }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  /* 移动端菜单 */
+  function closeMenu(){
+    burger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+  }
+  burger.addEventListener('click', function(){
+    var open = mobileMenu.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mobileMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', closeMenu);
+  });
+
+  /* Toast 占位反馈 */
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+  }
+  document.querySelectorAll('[data-toast]').forEach(function(el){
+    el.addEventListener('click', function(){ showToast(el.getAttribute('data-toast')); });
+  });
+
+  /* 滚动揭示 */
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.12});
+    revealEls.forEach(function(el){ io.observe(el); });
+  }else{
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* 滚动高亮当前章节 */
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.nav-links a');
+  if('IntersectionObserver' in window){
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var id = e.target.getAttribute('id');
+          navLinks.forEach(function(l){
+            l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px'});
+    sections.forEach(function(s){ spy.observe(s); });
+  }
+
+  /* ===== 照片集 / 相册视图 ===== */
+  var albumEl = document.getElementById('album');
+  var albumGrid = document.getElementById('albumGrid');
+  var yearChips = document.getElementById('yearChips');
+  var eraTabsEl = document.getElementById('eraTabs');
+  var backBtn = document.getElementById('albumBack');
+  var albumState = { era:'adult', year:'2022' };
+  var albumVisible = false;
+
+  function albumHash(){
+    var h = location.hash;
+    if(h.indexOf('#album') !== 0) return null;
+    var parts = h.split('/');
+    var era = parts[1] || 'child';
+    if(!ALBUM_DATA[era]) era = 'child';
+    var year = parts[2] || null;
+    var years = ALBUM_DATA[era].years;
+    if(year && years && years.indexOf(year) === -1) year = null;
+    return { era:era, year:year };
+  }
+  function groupIdFor(state){
+    var d = ALBUM_DATA[state.era];
+    return d.years ? (state.era + '-' + state.year) : state.era;
+  }
+  function renderEraTabs(active){
+    eraTabsEl.querySelectorAll('.era-tab').forEach(function(b){
+      var on = b.getAttribute('data-era') === active;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+  function renderYearChips(state){
+    yearChips.innerHTML = '';
+    var d = ALBUM_DATA[state.era];
+    if(!d.years) return;
+    d.years.forEach(function(y){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip' + (y === state.year ? ' active' : '');
+      b.textContent = y;
+      b.addEventListener('click', function(){
+        if(location.hash !== '#album/' + state.era + '/' + y){
+          location.hash = '#album/' + state.era + '/' + y;
+        }
+      });
+      yearChips.appendChild(b);
+    });
+  }
+  function ensureEmptyPlaceholders(groupEl){
+    if(groupEl.querySelector('figure') || groupEl.querySelector('.album-add')) return;
+    for(var i=0;i<6;i++){
+      var e = document.createElement('div');
+      e.className = 'album-empty';
+      e.textContent = '待添加照片';
+      groupEl.appendChild(e);
+    }
+  }
+  function renderGrid(state){
+    var gid = groupIdFor(state);
+    albumGrid.querySelectorAll('.album-group').forEach(function(g){
+      g.hidden = (g.dataset.group !== gid);
+    });
+    var groupEl = albumGrid.querySelector('.album-group[data-group="' + gid + '"]');
+    if(!groupEl) return;
+    ensureEmptyPlaceholders(groupEl);
+    if(!groupEl.querySelector('.album-add')){
+      var add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'album-add';
+      add.setAttribute('aria-label','添加照片到当前年份');
+      var plus = document.createElement('span');
+      plus.className = 'plus';
+      plus.textContent = '＋';
+      var txt = document.createElement('span');
+      txt.textContent = '添加照片';
+      add.appendChild(plus);
+      add.appendChild(txt);
+      add.addEventListener('click', function(){
+        showToast('把照片放入 assets 文件夹，再在对应年份的相册分组中添加一行');
+      });
+      groupEl.appendChild(add);
+    }
+  }
+  function routeAlbum(){
+    var parsed = albumHash();
+    if(parsed){
+      albumState.era = parsed.era;
+      albumState.year = parsed.year || (ALBUM_DATA[parsed.era].years ? ALBUM_DATA[parsed.era].years[0] : null);
+      if(!albumVisible){
+        document.body.classList.add('album-open');
+        albumEl.classList.add('open');
+        albumEl.scrollTop = 0;
+        backBtn.focus();
+        albumVisible = true;
+      }
+      renderEraTabs(albumState.era);
+      renderYearChips(albumState);
+      renderGrid(albumState);
+    }else if(albumVisible){
+      document.body.classList.remove('album-open');
+      albumEl.classList.remove('open');
+      albumVisible = false;
+    }
+  }
+  eraTabsEl.addEventListener('click', function(e){
+    var b = e.target.closest('.era-tab');
+    if(!b) return;
+    var era = b.getAttribute('data-era');
+    var years = ALBUM_DATA[era].years;
+    location.hash = years ? ('#album/' + era + '/' + years[0]) : ('#album/' + era);
+  });
+  backBtn.addEventListener('click', function(){ location.hash = '#gallery'; });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && albumVisible){ location.hash = '#gallery'; }
+  });
+  window.addEventListener('hashchange', routeAlbum);
+  routeAlbum();
+})();
+</script>
+</body>
+</html>

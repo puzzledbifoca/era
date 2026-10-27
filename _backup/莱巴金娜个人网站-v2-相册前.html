@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+==================================== 编辑指南 ====================================
+这是一个可直接编辑的单文件网页：用记事本 / VS Code / Sublime 等任意文本编辑器
+打开本文件即可修改，改完保存后刷新浏览器就能看到效果。
+
+各区块内容在文件中的位置（用编辑器搜索以下关键词即可定位）：
+  1. 名字、标语、按钮文字   → 搜索 "hero"（首屏区域）
+  2. 个人介绍、资料表       → 搜索 "about"（关于区）
+  3. 生涯里程碑             → 搜索 "career"（生涯时间轴）
+  4. 数据数字               → 搜索 "stats"（数据区）
+  5. 图片                   → 把照片放进 assets 文件夹，再替换 src="assets/xxx.jpg"
+  6. 联系方式、社交账号     → 搜索 "contact"（联系区）
+  7. 配色、字体等样式       → 搜索 ":root"（CSS 变量区）
+
+标注「待补充 / 占位」的文字就是预留给你填写的内容位置。
+==================================== 编辑指南 ====================================
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>莱巴金娜 · Elena Rybakina 个人网站</title>
+<meta name="description" content="Elena Rybakina 莱巴金娜个人网站 —— 黑白简约风格，职业网球选手。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23000'/%3E%3Cpath d='M16 1v30M3.5 10c4.5 3.5 20.5 3.5 25 0M3.5 22c4.5-3.5 20.5-3.5 25 0' stroke='%23fff' stroke-width='1.4' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap">
+<style>
+/* ===== 基础 ===== */
+:root{
+  --ink:#000000;
+  --paper:#ffffff;
+  --gray:#6b6b6b;
+  --line:#e5e5e5;
+  --soft:#f7f7f7;
+  --serif:"Bodoni MT","Didot","Playfair Display","Noto Serif SC","Songti SC","SimSun",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);line-height:1.75;font-weight:300;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+section{scroll-margin-top:60px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+::selection{background:var(--ink);color:var(--paper)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ===== 顶部导航 ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;color:#fff;border-bottom:1px solid transparent;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.nav.scrolled{background:var(--paper);color:var(--ink);border-bottom-color:var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:.14em;display:flex;align-items:baseline;gap:10px}
+.logo .logo-en{font-size:19px}
+.logo .logo-cn{font-size:13px;letter-spacing:.3em;opacity:.85}
+.nav-links{display:none;gap:30px;font-size:14px;letter-spacing:.08em}
+.nav-links a{position:relative;padding:4px 0}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:currentColor;transition:width .25s ease}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-burger{display:flex;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:10px 6px}
+.nav-burger span{width:22px;height:1.5px;background:currentColor;transition:transform .25s ease,opacity .25s ease}
+.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;z-index:90;background:var(--paper);color:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:40px 32px;transform:translateY(-100%);transition:transform .35s ease;visibility:hidden}
+.mobile-menu.open{transform:none;visibility:visible}
+.mobile-menu a{font-family:var(--serif);font-size:30px;font-weight:600;padding:16px 0;border-bottom:1px solid var(--line);letter-spacing:.1em}
+
+@media (min-width:768px){
+  .nav-links{display:flex}
+  .nav-burger{display:none}
+}
+
+/* ===== Hero ===== */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden}
+.hero-bg{position:absolute;inset:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.06)}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.58) 55%,rgba(0,0,0,.78) 100%)}
+.hero-content{position:relative;z-index:1;text-align:center;padding:110px 24px 96px;max-width:1000px}
+.hero-kicker{font-size:13px;letter-spacing:.36em;text-transform:uppercase;opacity:.85;margin-bottom:20px}
+.hero h1{font-family:var(--serif);font-weight:600;line-height:.94;font-size:clamp(54px,12.5vw,146px);letter-spacing:.02em}
+.hero h1 span{display:block}
+.hero-cn{margin-top:16px;font-size:20px;letter-spacing:.62em;text-indent:.62em;font-weight:400}
+.hero-tag{margin-top:26px;font-size:15px;letter-spacing:.1em;opacity:.88}
+.hero-cta{margin-top:42px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 30px;border:1px solid #fff;background:transparent;color:#fff;font-size:14px;letter-spacing:.2em;cursor:pointer;transition:background .25s ease,color .25s ease}
+.btn-solid{background:#fff;color:#000}
+.btn-solid:hover{background:transparent;color:#fff}
+.btn-ghost:hover{background:#fff;color:#000}
+.hero-scroll{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:12px;letter-spacing:.32em;opacity:.7;text-align:center;white-space:nowrap}
+.hero-scroll::before{content:"";display:block;width:1px;height:44px;background:#fff;margin:0 auto 8px}
+.hero-kicker,.hero h1,.hero-cn,.hero-tag,.hero-cta{animation:heroIn .95s cubic-bezier(0.22,1,0.36,1) both}
+.hero h1{animation-delay:.08s}
+.hero-cn{animation-delay:.18s}
+.hero-tag{animation-delay:.28s}
+.hero-cta{animation-delay:.38s}
+@keyframes heroIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-kicker,.hero h1,.hero-cn,.hero-tag,.hero-cta{animation:none}
+}
+
+/* ===== 章节 ===== */
+.section{padding:92px 0;border-top:1px solid var(--line)}
+.section-head{margin-bottom:56px}
+.sec-num{font-family:var(--serif);font-size:15px;color:var(--gray);letter-spacing:.22em;text-transform:uppercase}
+.sec-title{font-family:var(--serif);font-size:clamp(30px,5vw,46px);font-weight:600;margin-top:12px;line-height:1.2}
+.sec-sub{margin-top:14px;color:var(--gray);font-size:15px;max-width:600px}
+
+/* 占位框 */
+.placeholder{border:1px dashed var(--ink);background:var(--soft);color:var(--gray);font-size:14px;padding:22px 24px;line-height:1.9}
+.placeholder strong{color:var(--ink);font-weight:500}
+
+/* ===== 关于 ===== */
+.about-grid{display:grid;gap:44px}
+.about-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(1) contrast(1.04);border:1px solid var(--line)}
+.about-note{display:block;margin-top:12px;font-size:12px;color:var(--gray);letter-spacing:.12em}
+.about-body{display:flex;flex-direction:column}
+.about-body h3{font-family:var(--serif);font-size:22px;font-weight:600;margin-bottom:20px;line-height:1.4}
+.about-body p{font-size:15px;color:#333;margin-bottom:18px;max-width:60ch}
+.fact-list{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:24px}
+.fact-list div{background:var(--paper);padding:14px 16px}
+.fact-list dt{font-size:12px;color:var(--gray);letter-spacing:.12em}
+.fact-list dd{font-family:var(--serif);font-size:15px;font-weight:600;margin-top:4px}
+.about-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:28px}
+.meta-tag{font-size:12px;letter-spacing:.12em;border:1px solid var(--ink);padding:6px 14px}
+
+@media (min-width:900px){
+  .about-grid{grid-template-columns:4fr 8fr;gap:64px}
+}
+
+/* ===== 生涯时间轴 ===== */
+.tl-item{display:grid;grid-template-columns:92px 36px 1fr;position:relative;padding-bottom:54px}
+.tl-item:last-child{padding-bottom:0}
+.tl-year{text-align:right;padding-top:4px;font-family:var(--serif);font-size:15px;color:var(--gray);font-variant-numeric:tabular-nums}
+.tl-axis{position:relative}
+.tl-axis::before{content:"";position:absolute;left:50%;top:0;bottom:-54px;width:1px;background:var(--ink);transform:translateX(-50%)}
+.tl-item:last-child .tl-axis::before{bottom:auto;height:24px}
+.tl-dot{position:absolute;left:50%;top:5px;width:9px;height:9px;background:var(--ink);border-radius:50%;transform:translateX(-50%)}
+.tl-body{padding-left:28px;min-width:0}
+.tl-body h4{font-family:var(--serif);font-size:18px;font-weight:600;line-height:1.4}
+.tl-body p{margin-top:6px;font-size:14px;color:var(--gray)}
+.tl-body .placeholder{margin-top:12px}
+
+@media (max-width:640px){
+  .tl-item{grid-template-columns:70px 28px 1fr}
+  .tl-body{padding-left:20px}
+}
+
+/* ===== 数据 ===== */
+.stats-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--paper);padding:44px 24px;text-align:center}
+.stat-value{font-family:var(--serif);font-size:48px;font-weight:600;line-height:1.05;font-variant-numeric:tabular-nums}
+.stat-label{margin-top:16px;font-size:14px;letter-spacing:.14em}
+.stat-hint{margin-top:8px;font-size:12px;color:var(--gray)}
+@media (min-width:640px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+
+/* ===== 影像 ===== */
+.gallery-grid{display:grid;grid-template-columns:1fr;gap:22px}
+.g-item figure{margin:0}
+.g-item img{width:100%;aspect-ratio:4/3;object-fit:cover;filter:grayscale(1) contrast(1.04);transition:transform .5s ease;border:1px solid var(--line)}
+.g-item:hover img{transform:scale(1.025)}
+.g-item figcaption{margin-top:10px;font-size:13px;color:var(--gray);letter-spacing:.06em}
+@media (min-width:640px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.gallery-grid{grid-template-columns:repeat(3,1fr)}}
+
+/* ===== 联系 ===== */
+.contact{background:var(--ink);color:var(--paper)}
+.contact .sec-num{color:#999}
+.contact .sec-title{color:#fff}
+.contact .sec-sub{color:#aaa}
+.contact .placeholder{background:#111;border-color:#555;color:#aaa}
+.contact-links{display:flex;gap:12px;margin-top:40px;flex-wrap:wrap}
+.social-btn{width:52px;height:52px;border:1px solid #fff;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s ease,color .25s ease}
+.social-btn:hover{background:#fff;color:#000}
+.social-btn svg{width:20px;height:20px}
+
+/* ===== 页脚 ===== */
+.footer{background:var(--ink);color:#8a8a8a;border-top:1px solid #262626;padding:26px 0;font-size:12px;letter-spacing:.06em}
+.footer .wrap{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* ===== Toast 提示 ===== */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:#fff;padding:11px 20px;font-size:14px;letter-spacing:.05em;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:300;max-width:86vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== 滚动揭示 ===== */
+.reveal{opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部导航 ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#home" aria-label="回到首页">
+      <span class="logo-en">E.R.</span>
+      <span class="logo-cn">莱巴金娜</span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#home">首页</a>
+      <a href="#about">关于</a>
+      <a href="#career">生涯</a>
+      <a href="#stats">数据</a>
+      <a href="#gallery">影像</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <button class="nav-burger" id="burger" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- 移动端菜单 -->
+<nav class="mobile-menu" id="mobileMenu" aria-label="移动端导航">
+  <a href="#home">首页</a>
+  <a href="#about">关于</a>
+  <a href="#career">生涯</a>
+  <a href="#stats">数据</a>
+  <a href="#gallery">影像</a>
+  <a href="#contact">联系</a>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="home">
+  <div class="hero-bg" aria-hidden="true">
+    <img src="assets/hero-wimbledon-final.jpg" alt="">
+  </div>
+  <div class="hero-content">
+    <p class="hero-kicker">WTA · 职业网球选手</p>
+    <h1><span>ELENA</span><span>RYBAKINA</span></h1>
+    <p class="hero-cn">莱 巴 金 娜</p>
+    <p class="hero-tag">2022 温布尔登女单冠军 · 2026年澳网冠军/美网冠军</p>
+    <div class="hero-cta">
+      <a class="btn btn-solid" href="#about">了解更多</a>
+      <a class="btn btn-ghost" href="#gallery">影像集</a>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">向下滚动</div>
+</section>
+
+<!-- ===== 关于 ===== -->
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">01 · 关于</p>
+      <h2 class="sec-title">ABOUT</h2>
+      <p class="sec-sub"></p>
+    </div>
+    <div class="about-grid">
+      <div class="about-photo reveal">
+        <img src="assets/portrait-bw.jpg" alt=">
+        <span class="about-note"></span>
+      </div>
+      <div class="about-body reveal">
+        <h3>个人介绍</h3>
+        <p class="placeholder"><strong></strong>莱巴金娜1999年6月17日出生于俄罗斯莫斯科，身高1.84米，现代表哈萨克斯坦出战，是首位夺得大满贯单打冠军并登顶WTA世界第一的哈萨克斯坦球员，以凌厉发球和冷静的“冰美人”气质著称。她家里养了三只狗：父母养的是穆利亚（Mulia）和贝基（Becky），她自己养了一只叫托比（Toby）的小狗；她有一个姐姐叫安娜（Anna），父母分别是安德烈（Andrey）和叶卡捷琳娜（Ekaterina）</p>
+        <dl class="fact-list">
+          <div><dt>出生日期</dt><dd>1999年6月17日</dd></div>
+          <div><dt>出生地</dt><dd>莫斯科/俄罗斯</dd></div>
+          <div><dt>身高</dt><dd>184厘米</dd></div>
+          <div><dt>持拍手</dt><dd>右手</dd></div>
+        </dl>
+        <div class="about-meta">
+          <span class="meta-tag">赛场关键词 · 面如平湖而胸有惊雷</span>
+          <span class="meta-tag">教练团队 · Stefano Vukov（CRO/ITA） Stanislav Khamarsky(UKR)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 生涯 ===== -->
+<section class="section" id="career">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">02 · 生涯</p>
+      <h2 class="sec-title">CAREER</h2>
+      <p class="sec-sub">职业生涯里程碑时间线。已预填一项公开事实，其余节点待本人补充。</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-year">2026</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>登顶世界第一</h4>
+          <p>2026年夺得澳网/美网两项大满贯冠军并在美网后登顶世界第一</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2022</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>初夺大满贯冠军</h4>
+          <p>2022年于温布尔登网球公开赛获得第一个大满贯冠军。</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2019</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>WTA生涯首冠</h4>
+          <p>2019年于布加勒斯特获得WTA首冠。</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2017</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>青少年终章</h4>
+          <p>2017年获得第一个青少年Grade A冠军，并在当年创造青少年生涯最高排名世界第三位。</p>
+        </div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-year">2014</div>
+        <div class="tl-axis"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <h4>生涯起点</h4>
+          <p>2014年正式开始征战ITF赛事。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 数据 ===== -->
+<section class="section" id="stats">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">03 · 数据</p>
+      <h2 class="sec-title">STATS</h2>
+      <p class="sec-sub">关键数据一览。数值待本人提供后填入，当前以「—」占位。</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat reveal"><div class="stat-value">—</div><div class="stat-label">最高单打排名</div><div class="stat-hint">No.1</div></div>
+      <div class="stat reveal"><div class="stat-value">—</div><div class="stat-label">大满贯单打冠军</div><div class="stat-hint">3</div></div>
+      <div class="stat reveal"><div class="stat-value">—</div><div class="stat-label">WTA 单打冠军</div><div class="stat-hint">15</div></div>
+      <div class="stat reveal"><div class="stat-value">—</div><div class="stat-label">最快发球时速</div><div class="stat-hint">>210KM</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 影像 ===== -->
+<section class="section" id="gallery">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">04 · 影像</p>
+      <h2 class="sec-title">GALLERY</h2>
+      <p class="sec-sub">赛场内外的黑白影像。以下为网络公开图（已统一为黑白调），可替换为本人提供的照片。</p>
+    </div>
+    <div class="gallery-grid">
+      <figure class="g-item reveal"><img src="assets/gallery-wimbledon-action.jpg" alt="温布尔登赛场击球瞬间"><figcaption>温布尔登 · 击球瞬间</figcaption></figure>
+      <figure class="g-item reveal"><img src="assets/gallery-black-outfit.jpg" alt="黑色运动装赛场照"><figcaption>赛场 · 专注时刻</figcaption></figure>
+      <figure class="g-item reveal"><img src="assets/gallery-title-defense.jpg" alt="温布尔登卫冕之路"><figcaption>温布尔登 · 卫冕之路</figcaption></figure>
+      <figure class="g-item reveal"><img src="assets/gallery-wimbledon-scene.jpg" alt="温布尔登赛场准备"><figcaption>温布尔登 · 赛前准备</figcaption></figure>
+      <figure class="g-item reveal"><img src="assets/gallery-trophy.jpg" alt="2022 温布尔登捧杯时刻"><figcaption>2022 温布尔登 · 捧杯时刻</figcaption></figure>
+      <figure class="g-item reveal"><img src="assets/gallery-practice.jpg" alt="训练备战"><figcaption>训练 · 备战赛场</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 联系 ===== -->
+<section class="section contact" id="contact">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="sec-num">05 · 联系</p>
+      <h2 class="sec-title">CONTACT</h2>
+      <p class="sec-sub">商务合作、媒体采访与球迷交流。联系方式待本人提供，社交账号暂为占位。</p>
+    </div>
+    <div class="reveal">
+      <p class="placeholder"><strong>【联系方式占位】</strong>在这里填写电子邮箱、经纪团队或媒体联络信息。</p>
+      <div class="contact-links">
+        <button class="social-btn" data-toast="Instagram 账号待配置" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button class="social-btn" data-toast="X 账号待配置" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h3.6l4.3 6.1L16.9 3H21l-6.7 8.2L21.6 21H18l-4.8-6.8L7.3 21H3l7.3-8.9L4 3z"/></svg>
+        </button>
+        <button class="social-btn" data-toast="YouTube 账号待配置" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10 9.5l5 2.5-5 2.5v-5z" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 页脚 ===== -->
+<footer class="footer">
+  <div class="wrap">
+    <span>© 2026 THE ERA OF ER</span>
+    <span>本站为非官方个人网站 · 由球迷hokapilq运营</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var nav = document.getElementById('nav');
+  var burger = document.getElementById('burger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  /* 导航滚动样式 */
+  function onScroll(){
+    if(window.scrollY > 24){ nav.classList.add('scrolled'); }else{ nav.classList.remove('scrolled'); }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  /* 移动端菜单 */
+  function closeMenu(){
+    burger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+  }
+  burger.addEventListener('click', function(){
+    var open = mobileMenu.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mobileMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', closeMenu);
+  });
+
+  /* Toast 占位反馈 */
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+  }
+  document.querySelectorAll('[data-toast]').forEach(function(el){
+    el.addEventListener('click', function(){ showToast(el.getAttribute('data-toast')); });
+  });
+
+  /* 滚动揭示 */
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.12});
+    revealEls.forEach(function(el){ io.observe(el); });
+  }else{
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* 滚动高亮当前章节 */
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.nav-links a');
+  if('IntersectionObserver' in window){
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var id = e.target.getAttribute('id');
+          navLinks.forEach(function(l){
+            l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px'});
+    sections.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
